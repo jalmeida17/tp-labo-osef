@@ -1,6 +1,5 @@
-# Projet LABO OSEF
 
-<div align="center">
+<div>
   <img src="osef-frontend/public/logo_osef.png" alt="OSEF Logo" width="200"/>
 </div>
 
