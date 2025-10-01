@@ -26,7 +26,7 @@ export default function Layout({ children }: LayoutProps) {
       <nav className="navbar">
         <div className="nav-content">
           <div className="nav-brand">
-            <Link to="/calendar">Planning Manager</Link>
+            <img src="/logo_osef.png" alt="OSEF Logo" className="nav-logo" />
           </div>
           <div className="nav-links">
             <Link

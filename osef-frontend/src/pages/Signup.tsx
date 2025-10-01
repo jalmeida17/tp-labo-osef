@@ -45,7 +45,9 @@ export default function Signup() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Inscription</h1>
+        <div className="auth-logo">
+          <img src="/logo_osef.png" alt="OSEF Logo" />
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Nom</label>

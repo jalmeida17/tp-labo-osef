@@ -7,7 +7,12 @@ import '../styles/Calendar.css';
 export default function Calendar() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1); // Start from Monday
+    return new Date(today.setDate(diff));
+  });
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const { user } = useAuth();
 
@@ -26,48 +31,73 @@ export default function Calendar() {
     }
   };
 
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-
-    return { daysInMonth, startingDayOfWeek, year, month };
+  const getWeekDays = () => {
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(currentWeekStart);
+      day.setDate(currentWeekStart.getDate() + i);
+      days.push(day);
+    }
+    return days;
   };
 
-  const getEventsForDay = (day: number) => {
-    const { year, month } = getDaysInMonth(currentDate);
-    const dayDate = new Date(year, month, day);
-    
+  const getEventsForDay = (date: Date) => {
     return events.filter(event => {
       const eventStart = new Date(event.startDate);
       const eventEnd = new Date(event.endDate);
+      const dayStart = new Date(date);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(date);
+      dayEnd.setHours(23, 59, 59, 999);
       
-      return dayDate >= new Date(eventStart.getFullYear(), eventStart.getMonth(), eventStart.getDate()) &&
-             dayDate <= new Date(eventEnd.getFullYear(), eventEnd.getMonth(), eventEnd.getDate());
+      return (eventStart <= dayEnd && eventEnd >= dayStart);
     });
   };
 
-  const previousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
+  const calculateEventPosition = (event: Event, date: Date) => {
+    const eventStart = new Date(event.startDate);
+    const eventEnd = new Date(event.endDate);
+    const dayStart = new Date(date);
+    dayStart.setHours(8, 0, 0, 0); // Start at 8 AM
+    
+    // Calculate start position (in hours from 8 AM)
+    const startHour = Math.max(8, eventStart.getHours() + (eventStart.getMinutes() / 60));
+    const endHour = Math.min(20, eventEnd.getHours() + (eventEnd.getMinutes() / 60));
+    
+    const top = (startHour - 8) * 60; // 60px per hour
+    const height = Math.max(30, (endHour - startHour) * 60); // Minimum 30px height
+    
+    return { top, height };
   };
 
-  const nextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
+  const previousWeek = () => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(currentWeekStart.getDate() - 7);
+    setCurrentWeekStart(newDate);
   };
 
-  const monthNames = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-  ];
+  const nextWeek = () => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(currentWeekStart.getDate() + 7);
+    setCurrentWeekStart(newDate);
+  };
 
-  const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+  const goToToday = () => {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+    setCurrentWeekStart(new Date(today.setDate(diff)));
+  };
 
-  const { daysInMonth, startingDayOfWeek } = getDaysInMonth(currentDate);
-  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  const emptyDays = Array.from({ length: startingDayOfWeek }, (_, i) => i);
+  const weekDays = getWeekDays();
+  const dayNames = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+  const hours = Array.from({ length: 12 }, (_, i) => i + 8); // 8h to 19h
+
+  const formatWeekRange = () => {
+    const weekEnd = new Date(currentWeekStart);
+    weekEnd.setDate(currentWeekStart.getDate() + 6);
+    return `${currentWeekStart.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} - ${weekEnd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+  };
 
   if (loading) {
     return <div className="loading">Chargement...</div>;
@@ -76,47 +106,67 @@ export default function Calendar() {
   return (
     <div className="calendar-container">
       <div className="calendar-header">
-        <h1>Mon Calendrier</h1>
-        <div className="calendar-navigation">
-          <button onClick={previousMonth} className="nav-button">‹</button>
-          <span className="current-month">
-            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-          </span>
-          <button onClick={nextMonth} className="nav-button">›</button>
+        <h1>Planning</h1>
+        <div className="calendar-controls">
+          <button onClick={goToToday} className="today-button">Aujourd'hui</button>
+          <div className="calendar-navigation">
+            <button onClick={previousWeek} className="nav-button">‹</button>
+            <span className="current-week">{formatWeekRange()}</span>
+            <button onClick={nextWeek} className="nav-button">›</button>
+          </div>
         </div>
       </div>
 
-      <div className="calendar-grid">
-        {dayNames.map(day => (
-          <div key={day} className="day-name">{day}</div>
-        ))}
-        {emptyDays.map(i => (
-          <div key={`empty-${i}`} className="calendar-day empty"></div>
-        ))}
-        {days.map(day => {
+      <div className="weekly-calendar">
+        <div className="time-column">
+          <div className="time-header"></div>
+          {hours.map(hour => (
+            <div key={hour} className="time-slot">
+              {hour}:00
+            </div>
+          ))}
+        </div>
+        
+        {weekDays.map((day, dayIndex) => {
+          const isToday = day.toDateString() === new Date().toDateString();
           const dayEvents = getEventsForDay(day);
-          const isToday = 
-            day === new Date().getDate() &&
-            currentDate.getMonth() === new Date().getMonth() &&
-            currentDate.getFullYear() === new Date().getFullYear();
-
+          
           return (
-            <div
-              key={day}
-              className={`calendar-day ${isToday ? 'today' : ''} ${dayEvents.length > 0 ? 'has-events' : ''}`}
-            >
-              <span className="day-number">{day}</span>
-              <div className="events-list">
-                {dayEvents.map(event => (
-                  <div
-                    key={event.id}
-                    className="event-item"
-                    onClick={() => setSelectedEvent(event)}
-                    title={event.title}
-                  >
-                    {event.title}
-                  </div>
+            <div key={dayIndex} className="day-column">
+              <div className={`day-header ${isToday ? 'today' : ''}`}>
+                <div className="day-name">{dayNames[dayIndex]}</div>
+                <div className="day-date">{day.getDate()}</div>
+              </div>
+              <div className="day-content">
+                {hours.map(hour => (
+                  <div key={hour} className="time-slot"></div>
                 ))}
+                {dayEvents.map((event) => {
+                  const position = calculateEventPosition(event, day);
+                  return (
+                    <div
+                      key={event.id}
+                      className="event-block"
+                      style={{
+                        position: 'absolute',
+                        top: `${position.top}px`,
+                        height: `${position.height}px`,
+                        left: '4px',
+                        right: '4px',
+                        zIndex: 10
+                      }}
+                      onClick={() => setSelectedEvent(event)}
+                      title={event.title}
+                    >
+                      <div className="event-title">{event.title}</div>
+                      <div className="event-time">
+                        {new Date(event.startDate).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                        {' - '}
+                        {new Date(event.endDate).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );

@@ -1,47 +1,49 @@
 .profile-container {
-  padding: 40px;
+  padding: 24px;
   max-width: 800px;
   margin: 0 auto;
+  min-height: calc(100vh - 64px);
 }
 
 .profile-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 40px;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #e5e5e5;
+  padding: 32px;
 }
 
 .profile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e5e5;
 }
 
 .profile-header h1 {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
-  color: #1a202c;
+  color: #1a1a1a;
   margin: 0;
 }
 
 .btn-edit-profile {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #1a1a1a;
+  color: #ffffff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s ease;
 }
 
 .btn-edit-profile:hover {
+  background: #333333;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .profile-info {
@@ -53,50 +55,54 @@
 .info-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .info-group label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: #4a5568;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .info-group p {
   font-size: 16px;
-  color: #2d3748;
+  color: #1a1a1a;
   margin: 0;
 }
 
 .role-badge {
   display: inline-block;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 14px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 600;
   width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .role-badge.admin {
-  background: #ebf4ff;
-  color: #667eea;
+  background: #1a1a1a;
+  color: #ffffff;
 }
 
 .role-badge.user {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: #f0f0f0;
+  color: #1a1a1a;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-size: 14px;
-  font-weight: 600;
-  color: #4a5568;
+  font-weight: 500;
+  color: #1a1a1a;
 }
 
 .form-group input {
@@ -153,20 +159,21 @@
 }
 
 .btn-save {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #1a1a1a;
+  color: #ffffff;
   border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 6px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s ease;
 }
 
 .btn-save:hover {
+  background: #333333;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .success-message {
