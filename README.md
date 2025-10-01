@@ -1,5 +1,9 @@
 # Projet LABO OSEF
 
+<div align="center">
+  <img src="osef-frontend/public/logo_osef.png" alt="OSEF Logo" width="200"/>
+</div>
+
 ## Contexte
 Dans le cadre du projet de **LABO d’entreprise (BTS SIO 2ᵉ année)**, une application web interne a été développée pour permettre la gestion de plannings.  
 L’objectif est de fournir aux utilisateurs une interface **simple** et **sécurisée** pour consulter et administrer un planning en ligne.  
